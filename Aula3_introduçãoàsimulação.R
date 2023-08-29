@@ -93,3 +93,78 @@ x <- x+7
 x <- x+8 
 x <- x+9 
 x <- x+10 
+
+#4.2
+#Para “jogar o dado” uma vez, sorteio um número entre 1 e 4.
+X <- sample(1:4, size=1)
+#Como quero a frequência de longo prazo, preciso repetir esse processo (de maneira independente a cada jogada)  
+#n vezes.
+set.seed (36)
+# número de jogadas/simulações
+n <- 1000
+
+# vetor X, para armazenar o resultado de cada uma das n jogadas
+X <- numeric()
+
+# simulando n vezes
+for( i in 1:n){
+  X[i] <- sample(1:4, size=1)
+}
+
+# visualizando as primeiras 20 jogadas
+head(X, 20)
+
+#4.3
+#prob x = 1 
+sum(X==1)/n  #23%
+# prob X = 2
+sum(X==2)/n #27%
+# prob X = 3
+sum(X==3)/n #23%
+# prob X = 4
+sum(X==4)/n #27%
+## resumo geral
+summary(X)
+#Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#1.000   2.000   3.000   2.547   4.000   4.000 
+
+#loop ou laço 
+#imprime i 10X
+for (i in 1:10) {
+  print (i)
+}
+
+#imprime i 10X, mas devagar. É útil para não ser banido dos sites quando for fazer raspagem. 
+for (i in 1:10) {
+  print (i)
+  Sys.sleep(1)
+}
+
+#4.4 análise de sensibilidade 
+# número de jogadas/simulações
+n <- 1000
+
+# vetor X, para armazenar o resultado de cada uma das n jogadas
+X <- numeric()
+
+# número de replicações da simulação
+k <- 100
+
+# vetor para armazenar o erro medio
+erro_medio <- numeric()
+
+# simulando n vezes
+for (j in 1:k) {
+  for( i in 1:n){
+    X[i] <- sample(1:4, size=1)
+  }
+  p1 <- sum(X==1)/n
+  p2 <- sum(X==2)/n
+  p3 <- sum(X==3)/n
+  p4 <- sum(X==4)/n
+  erro_medio[j] = (abs(p1 - .25) + abs(p2 - .25) + abs(p3 - .25) + abs(p3 - .25)) /4
+}
+
+summary(erro_medio)
+# Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+#0.001750 0.006938 0.010375 0.011038 0.013875 0.027000 
