@@ -13,7 +13,7 @@ data <- get_pnadc(year=2017,
                   savedir=tempdir())
 # Seleção das variáveis para a lista: 
 install.packages("tidyverse")
-install.packages(tidylog)
+install.packages("tidylog")
 library(tidyverse)
 library(tidylog)
 data <- data %>%
@@ -46,8 +46,7 @@ install.packages("stargazer")
 library(stargazer)
 tabelareg <- stargazer(reg, type = "html", style = "ajps",
                        title = "Regressão Linear ex.2",
-          column.labels = c("Coeficientes"), omit.stat = "f",
-          title.append = "Model Summary", align = TRUE, single.row = TRUE)
+          column.labels = c("Coeficientes"), omit.stat = "f")
 
 #3. 
 intercepto <- 2077.956
@@ -103,8 +102,42 @@ rm40h #2002.812
 library(stargazer)
 tabelareg2 <- stargazer(reg2, type = "html", style = "ajps",
                        title = "Regressão Linear ex.4",
-                       column.labels = c("Coeficientes"), omit.stat = "f",
-                       title.append = "Model Summary", align = TRUE, 
-                       single.row = TRUE)
+                       column.labels = c("Coeficientes"), omit.stat = "f")
 
 #5. 
+#Intervalo de confiança questão 2
+-357.173 - 1.96 * 13.127 #-382.9019
+-357.173 + 1.96 * 13.127 #-331.4441
+#ICreg [-382.9019, -331.4441]
+
+#intervalo de confiança questão 4 
+28.9009 - 1.96 *  0.4535 #28.01204
+28.9009 + 1.96 *  0.4535 #29.78976
+#ICreg2 [28.01204, 29.78976]
+
+#Os intervalos de confiança são construídos, nesse caso, em torno do coeficiente 
+#estimado pela regressão e representam o intervalo numérico no qual o parâmetro 
+#populacional que a estimativa procurava medir se encontra a determinado nível 
+#de confiança, isto é, a determinada probabilidade.
+
+#Um nível de confiança de 95% mostra que 95% das amostras aleatórias da minha 
+#população conterão o parâmetro dentro do intervalo de confiança, e 5% delas não 
+#conterão. Como ambos os meus coeficientes estimados (em reg e em reg2) encontram
+#-se contidos nos intervalos de confiança calculados (ICreg e ICreg2) e ambos os 
+#intervalos de confiança não contém o número zero (0), meus coeficientes 
+#estimados são estatisticamente significativos, isto é, apenas não estarão 
+#contidos nos intervalos de confiança apenas em 5% das amostras aleatórias 
+#geradas.
+
+#Dizer que os coeficientes são estatisticamente significantes ou insignificantes 
+#significa dizer que os coeficientes estimados para a minha amostra são 
+#aleatórios, isto é, ocorreram apenas para essa amostra, ou se valem também para 
+#outras amostras aleatórias da mesma população. Ao dizer que um coeficiente é 
+#estatisticamente significativo a um nível de confiança de 95%, por exemplo, 
+#estou dizendo que em 95% das amostras aleatórias de minha população esse 
+#coeficiente também será estimado, conforme os resultados do teste de hipótese 
+#(intervalo de confiança). Se meus coeficientes não estivessem contidos nos 
+#intervalos de confiança ou se esses contivessem o número zero, poderíamos dizer 
+#que meus coeficientes não são estatisticamente significativos, isto é, são 
+#intrínsecos à minha amostra.
+
