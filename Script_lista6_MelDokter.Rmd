@@ -1,0 +1,97 @@
+---
+title: "Lista 6"
+author: "Mel Dokter Palomo - vespertino - 12507543"
+date: '2023-11-30'
+output: pdf_document
+---
+
+### **Exercício 1.**
+
+```{r Exercício 1, echo=TRUE, message=FALSE, warning=FALSE}
+#Banco de dados
+#install.packages("data.table")
+library(data.table)
+#install.packages("here")
+library(here)
+enem22 <- fread(here("MICRODADOS_ENEM_2022.csv"), 
+                   encoding = "Latin-1")
+
+#Selecionando as variáveis e limpando o banco
+library(tidyverse)
+enem22 <- enem22 %>%
+  select(NU_NOTA_CH, NU_NOTA_MT)%>%
+  drop_na()
+colSums(is.na(enem22))
+```
+
+### **Exercício 2.**
+
+```{r Exercício 2, echo=TRUE, message=FALSE, warning=FALSE}
+#Modelo - prever a nota em matemática com a nota em Ciências Humanas
+reg <- lm(NU_NOTA_MT ~ NU_NOTA_CH, data=enem22)
+options(scipen = 9999)
+summary(reg)
+```
+
+**Interpretação dos coeficientes:** o intercepto do modelo é aproximadamente 62.97. Isso significa que quando a nota da prova de Ciências Humanas (NU_NOTA_CH) for =0 (o que, na prática, não é possível), a nota da prova de Matemática será 62.97. Já o B da regressão é aproximadamente 0.905. Isso significa que, para cada um (1) ponto adicionado na nota da prova de Ciências Humanas, aproximadamente 0.905 pontos serão acrescidos na nota da prova de matemática.
+
+### **Exercício 3.**
+
+```{r Exercício 3 , echo=TRUE, message=FALSE, warning=FALSE}
+#Intervalo de confiança
+0.9050275 - 1.96 * 0.0007451
+0.9050275 + 1.96 * 0.0007451
+```
+
+**IC reg = [0.9035671, 0.9064879]**
+
+**Por que o R utiliza a distribuição t (e não a distribuição normal) para as inferências?** O R utiliza a distribuição t em detrimento da distribuição normal pois a variância populacional dos dados não é conhecida, e, em seu lugar, utiliza-se como estimador nos cálculos a variância dos resíduos da regressão. Esse estimador, por sua vez, não possuí distribuilção normal, porquanto é viesado, já que, por ser baseado na amostra, é afetado pelo desvio padrão da amostra, vieses de seleção, e etc., mas sim, uma distribuição t-student, já que, para conter seu viés, necessitamos dividi-lo por n-2, isto é, seus graus de liberdade.
+
+### **Exercício 4.**
+
+```{r Exercicio 4, echo=TRUE, message=FALSE, warning=FALSE}
+resi <- data.frame(residuos = residuals(reg), preditor = enem22$NU_NOTA_CH)
+resi %>%
+  ggplot(aes(x=preditor, y=residuos)) + geom_point() + 
+  geom_smooth(method = "lm", se=F)
+```
+
+**Conclusão**: Os resíduos deveriam ter esperança zero, condicional aos preditores. Para isso, para cada x os resíduos devem ter média zero. Graficamente, se houver pontos suficientes na proximidade de cada x, a dispersão dos resíduos deve ser aleatória, sem um padrão claro. Isso formará uma reta horizontal de média zero. No gráfico dos resíduos de "reg", verifica-se que uma boa parte dos resíduos encontra-se concetrada sobre a reta horizontal de média zero, ou bastante próxma a ela; embora também haja bastante dados que não estão próximos dessa reta e que não apresentam dispersão aleatória. Assim, não verifico o pressuposto nesse caso.
+
+**Motivação**: esse teste tem como motivação verificar o pressuposto que os resíduos do modelo de regrssão devem ter esperança zero condicional aos preditores.
+
+**Consequência**: violar esse presuposto pode significar que o modelo não está bem adequado as variáveis, isto é, os coeficientes estimados podem não refletir adequadamente a relação entre as variáveis independentes e dependentes. Ademais, demais inferências e previsões utilizando o modelo podem estar erradas, uma vez que pressupõem que os resídusos tem esperança condiconal zero.
+
+### **Exercício 5.**
+
+```{r exercicio 5 , echo=TRUE, message=FALSE, warning=FALSE}
+homo <- data.frame(residuos_sq = residuals(reg)^2, preditor = enem22$NU_NOTA_CH)
+homo %>%
+  ggplot(aes(x=preditor, y=residuos_sq)) + geom_point() + 
+  geom_smooth(method = "lm", se=F)
+```
+
+**Conclusão**: A reta do gráfico deveria ser horizontal, e não deveria haver mais pontos acima do que abaixo da reta. No gráfico dos quadrados do resíduo de "reg", a reta é bastante quase horizontal. Entretanto, há muito mais pontos acima da reta do que abaixo. Dessa forma, para esse modelo, não se confirma o pressuposto de homocedasticidade dos resíduos.
+
+**Consequência**: violar esse presuposto pode significar problemas com as hipóteses que norteiam o modelo, ou que a variância dos resíduos não é constante (variância muda conforme o preditor), ou que a forma funcional do modelo está errada de alguma forma.
+
+### **Exercício 6.**
+
+```{r exercicio 6, echo=TRUE, message=FALSE, warning=FALSE}
+#Plot histograma dos resíduos sob densidade normal
+norm <- data.frame(residuos = residuals(reg), preditor = enem22$NU_NOTA_CH, 
+                   density_points = rnorm(length(residuals(reg)), 0, 
+                                          sd(residuals(reg))))
+
+norm %>% 
+  ggplot(aes(residuos)) + geom_histogram(aes(y=..density..)) + 
+  geom_density(aes(density_points), colour = "purple")
+
+#Q-Q plot
+qqnorm(residuals(reg))
+qqline(residuals(reg))
+```
+
+**Conclusão**: Plotando o histograma dos resíduos e por cima a densidade de uma distribuição normal, verifica-se o pressuposto da normalidade dos resíduos pois a distribuição dos resíduos encaixa-se em na densidade da distribuição normal com média zero (como a dos resíduos) e desvio-padrão igual ao desvio padrão dos resíduos. Pelo Q-Q Plot, verifica-se que os extremos da distribuição não seguem a reta de 45º, entretanto, os valores em torno da média estão rentes a reta de 45º, o que mostra a normalidade da distribuição dos resíduos.
+
+**Consequência**: violar esse presuposto pode significar que os as inferências como teste de hipóteses, e intervalos de confiança baseados na estatística p-valor podem estar imprecisas ou enviesadas.
