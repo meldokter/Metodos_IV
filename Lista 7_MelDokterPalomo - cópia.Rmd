@@ -1,0 +1,168 @@
+---
+title: "Lista 7"
+author: "Mel Dokter Palomo - 12507543 - graduação - vespertino"
+date: "2023-12-13"
+output: pdf_document
+header-includes:
+  - \usepackage{amsmath}
+---
+
+### Exercício 1
+
+```{r Exercico 1 1, echo=TRUE, message=FALSE, warning=FALSE}
+#Banco de dados
+#install.packages("data.table")
+library(data.table)
+#install.packagExercício 1es("here")
+library(here)
+enem22 <- fread(here("MICRODADOS_ENEM_2022.csv"), 
+                   encoding = "Latin-1")
+```
+
+```{r Exercicio 1 2, echo=TRUE, message=FALSE, warning=FALSE}
+#Selecionando as variáveis e limpando o banco
+library(tidyverse)
+enem22 <- enem22 %>%
+  select(NU_NOTA_CH, NU_NOTA_MT, NU_NOTA_CN, NU_NOTA_LC, TP_SEXO, TP_COR_RACA, TP_ESCOLA)%>%
+  drop_na() 
+
+enem22$TP_SEXO <- factor(enem22$TP_SEXO)
+enem22$TP_COR_RACA <- factor(enem22$TP_COR_RACA)
+enem22$TP_ESCOLA <- factor(enem22$TP_ESCOLA)
+```
+
+### Exercício 2
+
+```{r Exercicio 2 , echo=TRUE, message=FALSE, warning=FALSE}
+set.seed(123)
+enem22 <- enem22 %>%
+  slice_sample(n=10000)
+  
+reg <- lm(NU_NOTA_MT ~ NU_NOTA_CH + NU_NOTA_CN + NU_NOTA_LC + TP_SEXO + 
+            TP_COR_RACA + TP_ESCOLA, data = enem22)
+summary(reg)
+```
+
+**Equação da regressão (escalar)**: Y = a + B1\*x1 + B2\*x2 + B3\*x3 + B4\*x4 + B5\*x5 + B6\*x6 + e
+
+NU_NOTA_MT = -60.17851 + NU_NOTA_CH\* 0.38134 + NU_NOTA_CN\*0.46979 + NU_NOTA_LC\*0.29542 + TP_SEXOM\* 27.66647 + TP_COR_RACA1\*10.27254 + TP_COR_RACA2\*-12.86140 + TP_COR_RACA3\* -3.65773 + TP_COR_RACA4\*14.69543 + TP_COR_RACA5\*-8.21869 + TP_ESCOLA2\*-0.13731 + TP_ESCOLA3\* 25.71369
+
+**Equação da regressão (matricial):** $$
+\begin{align}
+  \begin{bmatrix}
+    y_1 \\
+     y_2 \\
+     \vdots \\
+     y_{n}
+     \end{bmatrix}
+     &= 
+          \begin{bmatrix}
+           1 & x_{11} & x_{21} \cdots & x_{p1}\\
+           1 & x_{12} & x_{22} \cdots & x_{p2}\\
+           \vdots \\
+           1 & x_{1n} & x_{2n} \cdots & x_{pn}
+         \end{bmatrix}
+          \begin{bmatrix}
+           \alpha \\
+           \beta_1 \\
+           \beta_2 \\
+           \vdots \\
+           \beta_p
+         \end{bmatrix} +
+        \begin{bmatrix}
+           e_1 \\
+           e_2 \\
+           \vdots \\
+           e_n
+         \end{bmatrix}
+  \end{align}
+  $$
+
+$$\begin{bmatrix} \text{nota mat}_1 \\ \text{nota mat}_2 \\ \vdots \\ \text{nota mat}_n \end{bmatrix} = \begin{bmatrix} 1 & \text{nota ch}_1 & \text{nota cn}_1 & \text{nota lc}_1 & \text{sexo}_1 & 
+\text{raça 1}_1 & \text{raça 2}_1 & \text{raça 3}_1 & \text{raça 4}_1 & \text{raça 5}_1 & \text{escola 2}_1 & \text{escola 3}_1 \\ 1 & \text{nota ch}_2 & \text{nota cn}_2 & \text{nota lc}_2 & \text{sexo}_2 & \text{raça 1}_2 & 
+\text{raça 2}_2 & \text{raça 3}_2 & \text{raça 4}_2 & \text{raça 5}_2 & \text{escola 2}_2 & \text{escola 3}_2 \\ 
+\vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\ 1 & 
+\text{nota ch}_n & \text{nota cn}_n & \text{nota lc}_n & 
+\text{sexo}_n & \text{raça 1}_n & \text{raça 2}_n & \text{raça 3}_n & \text{raça 4}_n & \text{raça 5}_n & \text{escola 2}_n & \text{escola 3}_n \end{bmatrix} \begin{bmatrix} 
+-60.17851 \\0.38134 \\0.46979 \\0.29542 \\27.66647 \\10.27254 \\-12.86140 \\-3.65773 \\14.69543 \\-8.21869 \\-0.13731 \\25.71369 
+\end{bmatrix} + \begin{bmatrix} \varepsilon_1 \\ \varepsilon_2 \\ \vdots \\ \varepsilon_n \end{bmatrix}$$
+
+### Exercício 3
+
+**Interpretação dos coeficientes e categoria de referência:**
+
+O intercepto é -60.17851, que representa a nota média da prova de matemática (NU_NOTA_MT) quando o "valor" de todos os outros preditores é zero.
+
+O primeiro coeficiente, NU_NOTA_CH, mostra que a cada aumento de um ponto na nota da prova de Ciências Humanas, é esperado um aumento de 0.38134 pontos na nota de Matemática.
+
+O segundo coeficiente, NU_NOTA_CN, mostra que a cada aumento de um ponto na nota da prova de Ciências da Natureza, é esperado um aumento de 0.46979 pontos na nota de Matemática.
+
+O terceiro coeficiente, NU_NOTA_LC, mostra que a cada aumento de um ponto na nota da prova de Linguagens e Códigos, é esperado um aumento de 0.29542 pontos na nota de Matemática.
+
+O quarto coeficiente, TP_SEXOM, mostra que, quando a variável sexo é igual a masculino, é esperado um aumento de 27.66647 pontos na nota de Matemática. Para essa variável, a categoria de referência é sexo igual a Feminino.
+
+O quinto coeficiente, TP_COR_RACA1, mostra que, quando a variável raça é igual a branca, é esperado um aumento de 10.27254 pontos na nota de Matemática.
+
+O sexto coeficiente, TP_COR_RACA2, mostra que, quando a variável raça é igual a preta, é esperada uma diminuição de 12.86140 pontos na nota de Matemática.
+
+O sétimo coeficiente, TP_COR_RACA3, mostra que, quando a variável raça é igual a parda, é esperada uma diminuição de 3.65773 pontos na nota de Matemática.
+
+O oitavo coeficiente, TP_COR_RACA4, mostra que, quando a variável raça é igual a amarela, é esperado um aumento de 14.69543 pontos na nota de Matemática.
+
+O nono coeficiente, TP_COR_RACA5, mostra que, quando a variável raça é igual a indígena, é esperada uma diminuição de 8.21869 pontos na nota de Matemática.
+
+Para a variável TP_COR_RACA, a categoria de referência de todos os coeficientes é "Não declarado".
+
+O décimo coeficiente, TP_ESCOLA2, mostra que, quando a variável tipo de escola é igual a pública, é esperada uma diminuição de 0.13731 pontos na nota de Matemática.
+
+Por fim, o décimo primeiro coeficiente, TP_ESCOLA3, mostra que, quando a variável tipo de escola é igual a privada, é esperado um aumento de 25.71369 pontos na nota de Matemática.
+
+Para a variável TP_ESCOLA, a categoria de referência de todos os coeficientes é "Não respondeu".
+
+**Mudança das categorias de referência:**
+
+```{r Exercico 3, echo=TRUE, message=FALSE, warning=FALSE}
+enem22dif <- enem22 %>%
+  mutate(TP_SEXO = as.factor(TP_SEXO) %>%
+           relevel(ref = "M"),
+         TP_COR_RACA = as.factor(TP_COR_RACA) %>%
+           relevel(ref = "2"),
+         TP_ESCOLA = as.factor(TP_ESCOLA) %>%
+           relevel(ref = "3"))
+
+reg2 <- lm(NU_NOTA_MT ~ NU_NOTA_CH + NU_NOTA_CN + NU_NOTA_LC + TP_SEXO + 
+             TP_COR_RACA + TP_ESCOLA, data = enem22dif)
+summary(reg2)
+```
+
+Ao mudar as categorias de referência os coeficientes se modificam, desse modo, a interpretação deles também. O intercepto passa a ser -19.65975, que representa a nota média da prova de matemática (NU_NOTA_MT) quando o "valor" de todos os outros preditores é zero. O primeiro coeficiente, NU_NOTA_CH, o segundo coeficiente, NU_NOTA_CN, e também o terceiro coeficiente, NU_NOTA_LC, se mantém iguais. O quarto coeficiente, TP_SEXOM, mostra que, quando a variável sexo é igual a feminino, é esperada uma diminuição de 27.66647 pontos na nota de Matemática. O oposto do que ocorre quando a categoria de referência é o sexo masculino. Para o quinto coeficiente, TP_COR_RACA0, temos que, para os estudantes que não declararam sua raça, é esperado um aumento de 12.86140 pontos na nota de Matemática. O sexto coeficiente, TP_COR_RACA1, mostra que, quando a variável raça é igual a branca, é esperado um aumento de 23.13394 pontos na nota de matemática. Para o sétimo coeficiente, TP_COR_RACA3, temos que, quando a variável raça é igual a parda, é esperado um aumento de 9.20368 pontos na nota de Matemática. O oitavo coeficiente, TP_COR_RACA4, mostra que, quando a variável raça é igual a amarela, é esperado um aumento de 27.55684 pontos na nota de Matemática. O nono coeficiente, TP_COR_RACA5, mostra que, quando a variável raça é igual a indígena, é esperado um aumento de 4.64271 pontos na nota de Matemática. Para a variável TP_COR_RACA, a categoria de referência nesse caso foi "preta". O décimo coeficiente, TP_ESCOLA1, mostra que, quando a variável tipo de escola é igual "não respondeu", é esperada uma diminuição de 25.71369 pontos na nota de Matemática. Por fim, o décimo primeiro coeficiente, TP_ESCOLA2, mostra que, quando a variável tipo de escola é igual a pública, é esperada uma diminuição de 25.85100 pontos na nota de Matemática. Para a variável TP_ESCOLA, a categoria de referência de todos os coeficientes é "privada".
+
+### Exercício 4
+
+A regressão linear simples e a regressão linear múltipla diferem-se, sobretudo, pelo número de variáveis independentes. Dessa diferença, derivam-se outras. Com relação ao número de variáveis, a regressão linear simples envolve apenas duas variáveis, uma dependente e outra independente. Já a regressão linear múltipla envolve duas ou mais variáveis, uma dependente e duas ou mais independentes. Dessa maneira, na regressão linear múltipla, os coeficientes são a representação numérica da relação entre a variavél dependente e cada variável independente quando todas as outras variáveis mantém-se constantes. Na regressão linear simples, o coeficiente representa simplesmente a relação entre a variável dependente e a independente.
+
+Ademais as suposições que envolvem os modelos das duas regressões são diferentes. As suposições do modelo de regressão linear simples são a linearidade, independência, homocedasticidade e normalidade dos erros. O modelo de regressão linear múltipla também pressupõe essas quatro características, mas adiciona a exigência de não pode haver multicolinearidade entre as variáveis independentes.
+
+Por fim, vale ressaltar que a equação do modelo de regressão linear simples pode ser representada apenas por uma equação em notação escalar, ao passo que a equação do modelo de regressão linear múltipla pode ser representada também por uma equação em notação matricial.
+
+### Exercício 5
+
+```{r Exercício 5, echo=TRUE, message=FALSE, warning=FALSE}
+#install.packages("easystats")
+library(easystats)
+check_model(reg)
+```
+
+**Pressuposto: resíduos tem esperança zero condicional aos preditores (serem independentes):** não se pode confirmar o pressuposto de independencia dos erros, pois, conforme o gráfico "Linearity", a linha de referência não é reta e nem horizontal no valor zero (embora aproxima-se da horizontalidade em determinado ponto, onde a concentração de casos é maior).
+
+**Pressuposto de homocedasticidade:** não se pode confirmar o pressuposto de homocedasticidade pois, conforme o gráfico "Homogeneity of Variance", a linha de referência não é nem reta e nem horizontal. Embora haja quantidades parecida de casos acima e abaixo da linha de referência, a dispersão dos pontos não é constante no gráfico, indicando heterocedasticidade.
+
+**Pressuposto de normalidade dos erros:** pode-se confirmar o pressuposto de normalidade dos erros conforme o gráfico "Normality of Residuals", já que os pontos, com exceção de alguns casos nos extremos, seguem exatamente em cima da reta de referência.
+
+**Pressuposto de não multicolinearidade entre as variáveis independentes**: pode-se confirmar o pressuposto de não multicolinearidade entre as variáveis independentes conforme o gráfico "Collinearity". Todos os pontos estão com VIF menor que 5.
+
+```{r Exercício 5 2, echo=TRUE, message=FALSE, warning=FALSE}
+model_performance(reg)
+```
+
+Como medida para a performance do modelo irá-se utilizar o RMSE (erro Quadrático Médio Residual). Como estamos prevendo as notas de matemática do ENEM (que variam, em tese, de 0 a 1000), um RMSE de 81.006 é bastante pequeno, o que indica uma boa performance do modelo.
