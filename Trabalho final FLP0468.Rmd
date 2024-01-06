@@ -1,0 +1,374 @@
+---
+title: 'Trabalho final FLP0468: Replicação'
+author: "Mel Dokter Palomo - 12507543 - graduação - vespertino"
+date: "2023-12-30"
+output: pdf_document
+---
+
+## Introdução
+
+Este trabalho objetiva replicar o modelo de regressão linear de mínimos quadrados ordinários (MQO), presente no artigo de Lins, Figueiredo e Silva (2016) intitulado "A redução da maioridade penal diminui a violência? Evidências de um estudo comparado". Para além disso, pretende realizar uma análise crítica do modelo e do uso da técnica de regressão na metodologia do trabalho. 
+
+O artigo examinado objetiva analisar o sistema de justiça juvenil de 197 países em perspectiva comparada, tendo como objetivo específico testar a hipótese de que a redução na maioridade penal diminui os níveis de violência no país, de modo que países com patamares reduzidos de maioridade penal apresentariam, em média, menores níveis de violência. 
+
+Diante dessa hipótese, a variável dependente (nível de violência do país), foi operacionalizada a partir da taxa de homicídios por 100 mil habitantes. Já a variável independente (maioridade penal) foi mensurada por meio da idade de maioridade penal do país (idade em que o acusado é tratado como adulto para fins processuais e pode ser responsabilizado pelos seus atos) e da idade de responsabilidade criminal do país (patamar mínimo etário em que o sistema judicial pode responsabilizar um indivíduo por suas ações/omissões). 
+
+Para tal, os autores executam um desenho de pesquisa que associa estatística descritiva, análise espacial, correlação de Pearson e um modelo de regressão linear de mínimos quadrados ordinários (MQO). Ademais, possuem um banco de dados original que agrega dados dos estudos de Hazel (2008); Cipriani (2009); UNODC (2012); e da Grand Valley State University (2012). 
+
+## **I. O modelo de Lins, Figueiredo & Silva**
+
+Para testar a hipótese do artigo (Lins et al., 2016), foi utilizado o seguinte modelo de regressão linear de mínimos quadrados ordinários (MQO): 
+
+![](images/Captura%20de%20Tela%202024-01-02%20a%CC%80s%2022.54.55.png){width="9.5cm"}
+
+No qual Y representa a taxa de homicídio por 100 mil habitantes, X~1~ a maioridade penal/responsabilidade criminal; X~2~ o Índice de Desenvolvimento Humano (IDH); X~3~ o Índice de Gini; e X~4~ o desemprego de longo termo. 
+
+No modelo de regressão linear de mínimos quadrados ordinários (MQO), os coeficientes de regressão são estimados de modo a minimizar a soma total dos quadrados dos resíduos do modelo. O valor esperado do estimador de mínimos quadrados (a média amostral) é igual a média populacional. Sendo assim os estimadores MQO são não-viesados, isto é, a esperança matemática do estimador é igual ao valor do parâmetro (Hair, 2009).
+
+Para garantir resultados robustos, os autores rodaram o modelo quatro vezes, com diferentes fontes de dados e diferentes variáveis independentes. No modelo 1 (tabela 1), utilizam os dados de Hazel (2008) e tem como variável independente "maioridade penal". Os dados indicam que, em média, um aumento de um ano na maioridade penal está associado a uma redução de 0,365 na taxa de homicídios por 100 mil habitantes do país, controlando pelas demais variáveis. O modelo 2 (tabela 2) utiliza a mesma variável independente, mas com os dados da Grand Valley State University (2012). Nesse caso, o aumento de um ano na maioridade penal está associado a uma redução de 0,224 na taxa de homicídios, controlando pelas demais variáveis.
+
+Os modelos 3 (tabela 3) e 4 (tabela 4), tem como variável independente "responsabilidade criminal". O primeiro utiliza os dados de Hazel (2008) e mostra que, em média, um aumento de um ano no patamar de responsabilidade criminal acarreta em uma diminuição de 0,271 na taxa de homicídios por 100 mil habitantes do país. Já o segundo, utilizando os dados de Cipriani (2009) aponta que, em média, um aumento de um ano no patamar de responsabilidade criminal acarreta em uma diminuição de 0,048 na taxa de homicídios do país.
+
+Assim, diante dos resultados apresentados pelos modelos, os autores concluem que a redução da maioridade penal não está associada a diminuições nos indicadores de violência dos países, pelo contrário, quanto mais reduzidos os limites de maioridade penal e responsabilidade criminal maiores os índices de violência.
+
+![Tabela 1: Modelo 1. Replicação da tabela 3 de Lins et al. (2016)](images/modelo%201.png){width="321"}
+
+![Tabela 2: Modelo 2. Replicação da tabela 4 de Lins et al. (2016)](images/modelo%202.png){width="327"}
+
+![Tabela 3: Modelo 3. Replicação da tabela 5 de Lins et al. (2016)](images/modelo%203.png){width="331"}
+
+![Tabela 4: Modelo 4. Replicação da tabela 6 de Lins et al. (2016)](images/modelo%204-01.png){width="330"}
+
+## II. Replicação
+
+No artigo de Lins et al. (2016), os dados foram analisados com auxílio do Statistical Package for Social Science (SPSS), versão 20, Stata, versão 12, QGis 2.8 e GeoDa 1.6.6. Neste trabalho, a replicação dos dados foi feita no Rstudio versão 4.2.1. 
+
+Para a replicação dos modelos de regressão foi utilizado o banco de dados disponibilizados pelos autores. No que tange ao tratamento dos dados, apenas ajustou-se dois casos na variável "ACR_Cipriani", que estavam codificados como "999", mas representavam dados ausentes (NA).
+
+Uma dificuldade encontrada durante a replicação foi localizar quais variáveis foram utilizadas nos modelos. No banco de dados há duas variáveis que medem a taxa de homicídios por 100 mil habitantes (Homi_rate e Homi_rate_UNODC); duas que medem o índice de Gini (ginet_solt e ginmar_solt); duas que medem responsabilidade legal (ACR_Hazel e ACR_Cipriani); e duas que medem maioridade penal (ACM_Hazel e ACM_GV). Durante o texto, os autores indicam apenas quais variáveis usaram para medir responsabilidade legal e maioridade penal, mas não indicam quais variáveis utilizaram para medir o índice de Gini e a taxa de homicídios. Realizando testes com as possíveis opções de variáveis, descobriu-se que as utilizadas no artigo foram "Homi_rate_UNODC" para a taxa de homicídios por 100 mil habitantes e "ginmar_solt" para o índice de Gini. 
+
+```{r Importacao do banco, message=FALSE, warning=FALSE, include=FALSE}
+#Importando o Banco de dados
+#install.packages("data.table")
+library(data.table)
+#install.packagExercício 1es("here")
+library(here)
+Linsetal2016 <- fread(here("maioridade.tab"), 
+                   encoding = "Latin-1")
+
+#Correção do banco de dados 
+#install.packages("dplyr")
+library(dplyr)
+Linsetal2016 <- Linsetal2016 %>%
+  mutate(ACR_Cipriani = ifelse(ACR_Cipriani == 999, NA, ACR_Cipriani))
+```
+
+```{r Regressao 1, message=FALSE, warning=FALSE, include=FALSE}
+#Coeficientes não padronizados 
+reg1 <- lm(Homi_rate_UNODC ~ ACM_Hazel + IDH + ginmar_solt + DesempregoLongo, data = Linsetal2016)
+summary(reg1)
+```
+
+```{r Regressao 2, message=FALSE, warning=FALSE, include=FALSE}
+#Coeficientes não padronizados 
+reg2 <- lm(Homi_rate_UNODC ~ ACM_GV + IDH + ginmar_solt + DesempregoLongo, data = Linsetal2016)
+summary(reg2)
+```
+
+```{r Regressao 3, message=FALSE, warning=FALSE, include=FALSE}
+#Coeficientes não padronizados 
+reg3 <- lm(Homi_rate_UNODC ~ ACR_Hazel + IDH + ginmar_solt + DesempregoLongo, data = Linsetal2016)
+summary(reg3)
+```
+
+```{r Regressao 4, message=FALSE, warning=FALSE, include=FALSE}
+#Coeficientes não padronizados 
+reg4 <- lm(Homi_rate_UNODC ~ ACR_Cipriani + IDH + ginmar_solt + DesempregoLongo, data = Linsetal2016)
+summary(reg4)
+```
+
+Como pode-se notar pela tabela 5[^1], os resultados encontrados na replicação foram exatamente iguais aos observados por Lins et al. (2016), apresentados anteriormente nas tabelas 1 a 4. Para todos os quatro modelos, as constantes e os *coeficientes não padronizados* de cada variável foram iguais; os erros padrão (em parênteses na tabela 5), os p-valor e os r^~2~^ também são identicos aos encontrados pelos autores. Embora não reportados na tabela de replicação, a estatística t encontrada na replicação também foi similar à encontrada pelos autores.
+
+[^1]: Executou-se a tabela de replicação dos modelos no Rmarkdown com o pacote "stargazer", no formato "latex". Entretanto, no momento da exportação em PDF, a tabela era impressa em formato de código. Assim, consultou-se o ChatGPT (versão 3.5) para ajuda, que sugeriu copiar o código impresso no PDF no site "Overleaf", editor LaTex online, e anexar uma foto da tabela impressa por esse no Rmarkdown.
+
+![Tabela 5: Replicação dos modelos de Lins et al. (2016)](images/Captura%20de%20Tela%202024-01-02%20a%CC%80s%2020.18.45.png){width="493"}
+
+```{r Tabela modelos np, message=FALSE, warning=FALSE, include=FALSE}
+#visualizacao dos modelos replicados
+#install.packages("stargazer")
+library(stargazer)
+stargazer(list(reg1, reg2, reg3, reg4), header=FALSE, style = "ajps",
+                     title = "Modelos Replicados", omit.stat = "f", align = TRUE)
+```
+
+Embora não os utilizem para análise de dados durante o texto, os autores apresentam os *coeficientes padronizados*[^2] para os quatro modelos. Conforme a tabela 6[^3], os coeficientes padronizados encontrados na replicação são idênticos aos encontrados no artigo para todos os modelos e preditores.
+
+[^2]: Padronização é o processo no qual a variável original é transformada em uma nova variável com média 0 e desvio-padrão 1.
+
+[^3]: Para essa tabela, foi utilizado o mesmo procedimento sugerido pelo ChatGPT descrito na tabela 5.
+
+```{r Coeficientes padronizados, message=FALSE, warning=FALSE, include=FALSE}
+#Coeficientes padronizados 
+#install.packages("lm.beta")
+library(lm.beta)
+
+reg1.beta <- lm.beta(reg1)
+coef(reg1.beta)
+
+reg2.beta <- lm.beta(reg2)
+coef(reg2.beta)
+
+reg3.beta <- lm.beta(reg3)
+coef(reg3.beta)
+
+reg4.beta <- lm.beta(reg4)
+coef(reg4.beta)
+```
+
+```{r Visualização padronizados, message=FALSE, warning=FALSE, include=FALSE}
+#visualização coeficientes padronizados
+reg1pd <- coef(reg1.beta)
+reg2pd <- coef(reg2.beta)
+reg3pd <- coef(reg3.beta)
+reg4pd <- coef(reg4.beta)
+
+library(stargazer)
+
+stargazer(list(reg1pd, reg2pd, reg3pd, reg4pd), header=FALSE, style = "default",
+                     title = "Coeficientes padronizados", omit.stat = "f", align = TRUE)
+```
+
+![Tabela 6: Coeficientes padronizados](images/Captura%20de%20Tela%202024-01-04%20a%CC%80s%2018.05.43.png){width="411"}
+
+## III. Análise do modelo
+
+### III.I Checagem do modelo
+
+Para que as inferências realizadas por meio do modelo de regressão tenham acurácia, é necessário que as suposições do modelo estejam corretas. Essas suposições são as propriedades dos resíduos do modelo (diferença entre a previsão do modelo e o valor observado). São elas: esperança zero condicional aos preditores; homocedasticidade (variância constante); distribuição normal; e não multicolinearidade (Hair, 2009).
+
+Realizou-se uma checagem dos resíduos para todos os preditores apenas para o modelo 1 de regressão apresentado pelos autores. Os demais modelos, foram checados de maneira mais geral. Optou-se por essa estratégia já que, conforme será apresentado mais adiante, o modelo 1 é o mais bem ajustado aos dados.
+
+#### III.I.I Esperança zero condicional aos preditores: modelo 1
+
+Para que os resíduos tenham esperança zero condicional aos preditores do modelo, para cada valor de x os resíduos devem ter média zero. Graficamente, plota-se os resíduos em relação aos preditores. Se houver pontos suficientes na proximidade de cada x, a dispersão dos resíduos deve ser aleatória, sem um padrão claro. Isso formará uma reta horizontal de média zero (reta cor de rosa nos gráficos a seguir) (Hair, 2009).
+
+Como nota-se pelos gráficos 1 a 4, nenhum dos resíduos para nenhum dos preditores apresenta padrão de distribuição consistente, mas sim aleatório. Assim, verifica-se o pressuposto de esperança zero condicional aos preditores para o modelo 1.
+
+```{r Reg 1 esperança, echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+Linscheckreg1 <- Linsetal2016 %>%
+  select(ACM_Hazel, IDH, ginmar_solt, DesempregoLongo)%>%
+  drop_na()
+
+resireg1 <- data.frame(residuos = residuals(reg1), preditor = Linscheckreg1$ACM_Hazel)
+
+resireg1 %>%
+  ggplot(aes(x = preditor, y = residuos)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = FALSE, color = "pink") +
+  labs(title = "Gráfico 1: Resíduos em relação a ACM_Hazel") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r reg 1 esperança 2, echo=FALSE, message=FALSE, warning=FALSE}
+resireg1b <- data.frame(residuos = residuals(reg1), preditor = Linscheckreg1$IDH)
+
+resireg1b %>%
+  ggplot(aes(x = preditor, y = residuos)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = FALSE, color = "pink") +
+  labs(title = "Gráfico 2: Resíduos em relação a IDH") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r reg 1 esperanca 3, echo=FALSE, message=FALSE, warning=FALSE}
+resireg1c <- data.frame(residuos = residuals(reg1), preditor = Linscheckreg1$ginmar_solt)
+
+resireg1c %>%
+  ggplot(aes(x = preditor, y = residuos)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = FALSE, color = "pink") +
+  labs(title = "Gráfico 3: Resíduos em relação a ginmar_solt") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r reg 1 esperanca 4, echo=FALSE, message=FALSE, warning=FALSE}
+resireg1d <- data.frame(residuos = residuals(reg1), preditor = Linscheckreg1$DesempregoLongo)
+
+resireg1d %>%
+  ggplot(aes(x = preditor, y = residuos)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = FALSE, color = "pink") +
+  labs(title = "Gráfico 4: Resíduos em relação a DesempregoLongo") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+#### III.I.II Homocedasticidade: modelo 1
+
+Para que os resíduos apresentem homocedasticidade[^4], esses devem ter variância constante. Graficamente, plota-se o quadrado dos resíduos contra o preditor. As retas cor de rosa nos gráficos a seguir deveriam ser horizontais, e não deveria haver mais pontos acima do que abaixo da reta (Hair, 2009).
+
+[^4]: Variância dos termos de erro é constante no intervalo de valores de uma variável independente. Quando os termos de erro têm variância crescente ou flutuante, diz-se que os dados são heteroscedásticos (Hair, 2009).
+
+    \
+
+Conforme os gráficos 5 a 8, nenhuma das retas é horizontal. Entretanto, há em todos os casos mais pontos abaixo da reta do que acima dela. Assim, para o modelo 1, não verifica-se a suposição de homocedasticidade.
+
+```{r reg 1 homo 1, echo=FALSE, message=FALSE, warning=FALSE}
+homoreg1 <- data.frame(residuos_sq = residuals(reg1)^2, preditor = Linscheckreg1$ACM_Hazel)
+
+homoreg1 %>%
+  ggplot(aes(x=preditor, y = residuos_sq)) + geom_point() + geom_smooth(method="lm", se=F, color = "pink") +
+  labs(title = "Gráfico 5: Quadrado dos resíduos vs ACM_Hazel") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r reg 1 homo 2, echo=FALSE, message=FALSE, warning=FALSE}
+homoreg1b <- data.frame(residuos_sq = residuals(reg1)^2, preditor = Linscheckreg1$IDH)
+
+homoreg1b %>%
+  ggplot(aes(x=preditor, y = residuos_sq)) + geom_point() + geom_smooth(method="lm", se=F, color = "pink") +
+  labs(title = "Gráfico 6: Quadrado dos resíduos vs IDH") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r reg 1 homo 3, echo=FALSE, message=FALSE, warning=FALSE}
+homoreg1c <- data.frame(residuos_sq = residuals(reg1)^2, preditor = Linscheckreg1$ginmar_solt)
+
+homoreg1c %>%
+  ggplot(aes(x=preditor, y = residuos_sq)) + geom_point() + geom_smooth(method="lm", se=F, color = "pink") +
+  labs(title = "Gráfico 7: Quadrado dos resíduos vs ginmar_solt") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r reg 1 homo 4, echo=FALSE, message=FALSE, warning=FALSE}
+homoreg1d <- data.frame(residuos_sq = residuals(reg1)^2, preditor = Linscheckreg1$DesempregoLongo)
+
+homoreg1d %>%
+  ggplot(aes(x=preditor, y = residuos_sq)) + geom_point() + geom_smooth(method="lm", se=F, color = "pink") +
+  labs(title = "Gráfico 8: Quadrado dos resíduos vs DesempregoLongo") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+#### III.I.III Normalidade: modelo 1
+
+Os resíduos necessitam ter distribuição normal. Plotando o histograma dos resíduos conjuntamente com a densidade de uma distribuição normal com média zero (resíduos têm média zero) e desvio-padrão igual ao desvio padrão dos resíduos (linha rosa, gráfico 9), verifica-se que a distribuição dos resíduos para o modelo 1 não apresenta distribuição normal.
+
+```{r reg 1 norm 1, echo=FALSE, message=FALSE, warning=FALSE}
+normreg1 <- data.frame(residuos = residuals(reg1), preditor = Linscheckreg1$ACM_Hazel, density_points = rnorm(length(residuals(reg1)) , 0, sd(residuals(reg1))))
+
+normreg1 %>%
+  ggplot(aes(residuos)) + geom_histogram(aes(y=..density..)) + geom_density(aes(density_points), colour = "pink") +
+  labs(title = "Gráfico 9: Histograma dos resíduos modelo 1") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+Entretanto, por ser uma amostra pequena (n=29), a distribuição pode estar mal formada. Nesse sentido, analisa-se o Q-Q_plot. O plot "quantil-quantil" mostra que a distribuição dos resíduos do modelo 1 não é normal, já que os pontos não encontram-se na reta diagonal de 45º (HAIR, 2009). Essa distribuição não varia para os diferentes preditores do modelo de regressão 1.
+
+```{r reg1 norm 2, echo=FALSE, message=FALSE, warning=FALSE}
+qqnorm(residuals(reg1))
+qqline(residuals(reg1))
+```
+
+#### III.I.IV Não multicolinearidade: modelo 1
+
+Na regressão linear múltipla não pode haver multicolineariedade[^5] entre as variáveis independentes (Hair, 2009). Conforme o gráfico "Colinearity", nota-se que no modelo 1 todos os preditores estão abaixo de 5, informando que não há multicolinearidade entre as variáveis independentes.
+
+[^5]: Relação entre duas ou mais variáveis independentes. Ocorre quando qualquer variável independente é uma combinação linear de outra variável (Hair, 2009).
+
+```{r Pressupostos, echo=FALSE, fig.height=6, fig.width=8, message=FALSE, warning=FALSE}
+#install.packages("easystats")
+library(easystats)
+check_model(reg1)
+```
+
+Ademais, é possível observar a heterocedasticidade dos resíduos do modelo 1 e a distribuição não normal dos resíduos do modelo 1 por meio dos gráficos "Homogenity of Variance" e "Normality of Residuals", respectivamente.
+
+É interessante observar também que, para o modelo 1, os valores observados não assemelham-se aos valores preditos pelo modelo, conforme o gráfico "Posterior Predictive Check".
+
+#### III.I.V Demais modelos
+
+Com relação ao modelo 2, podemos dizer, conforme os gráficos a seguir, que não há homocedasticidade nos resíduos (variância não é constante); que os resíduos não possuem distribuição normal; e que não há multicolineariedade entre as variáveis independentes. Ademais, nota-se uma discrepância entre os dados previstos pelo modelo e os dados observados.
+
+```{r reg 2 check, echo=FALSE, fig.height=6, fig.width=8, message=FALSE, warning=FALSE}
+check_model(reg2)
+```
+
+Com relação ao modelo 3, podemos dizer, conforme os gráficos abaixo, que não há homocedasticidade nos resíduos; que os resíduos não possuem distribuição normal; e que não há multicolineariedade entre as variáveis independentes. Também nota-se uma discrepância entre os dados previstos pelo modelo e os dados observados.
+
+```{r reg 3 check, echo=FALSE, fig.height=6, fig.width=8, message=FALSE, warning=FALSE}
+check_model(reg3)
+```
+
+Com relação ao modelo 4, observa-se pelos gráficos a seguir que não há homocedasticidade nos resíduos; que os resíduos não possuem distribuição normal. Nesse modelo, a variável "ACR_Cipriani" apresenta um alto VIF[^6] (\>5). Esse valor indica um alto grau de multicolinearidade entre as variáveis independentes (Hair, 2009). Também observa-se uma discrepância entre os dados previstos pelo modelo e os dados observados.
+
+[^6]: Fator de inflação de variância. Indicador do efeito que as outras variáveis independentes têm sobre o erro padrão de um coeficiente de regressão (Hair, 2009).\
+
+```{r reg 4 check, echo=FALSE, fig.height=6, fig.width=8, message=FALSE, warning=FALSE}
+check_model(reg4)
+```
+
+Nos modelos 2, 3, e 4 o caso 24 é uma observação influente, isto é, exerce uma influência desproporcional sobre um ou mais aspectos das estimativas de regressão (Hair, 2009). É possível notar tal característica por meio do gráfico "Influential Observations", que apresenta para os três modelos o caso 24 fora dos limites das curvas de referência.
+
+### III.II Ajuste dos modelos
+
+No artigo (Lins et al. 2016), os autores utilizam como medida de ajuste do modelo o R^2^. Essa estatística mede a proporção da variância da variável dependente em torno da média que é explicada pelas variáveis independentes, variando entre 0 e 1. Conforme Hair (2009), se o modelo de regressão foi propriamente aplicado e estimado, pode-se assumir que quanto maior o valor de R^2^, maior o poder de explicação da equação de regressão e, portanto, melhor a previsão da variável dependente. 
+
+Lins et al. (2016) afirmam que o modelo 1 explica 36,4% da variação da variável dependente (r2 = 0,364); que o modelo 2 explica 38,2% da variação da variável dependente (r2 = 0,364); que o modelo 3 explica 44,7% da variação da taxa de homicídios por 100 mil habitantes (r2 = 0,447); e que o modelo 4 explica 38,7% da variação na variável dependente (r2 = 0,387). Na conclusão, apontam que conseguiram explicar, em média, cerca de 40% da variação na taxa de homicídio por 100 mil habitantes.
+
+Contudo, essa estatística não é um bom indicativo do ajuste do modelo, pois está sujeita a variância de Y (sendo que um modelo bem ajustado pode produzir um R^2^ baixo e um modelo mal ajustado um R^2^ alto, a depender da variância de Y) e não se pode comparar o R^2^ para amostras distintas pois, mesmo o modelo sendo o mesmo, dados distintos produzem estatísticas distintas (Hair, 2009). 
+
+Ademais, o R^2^ é uma métrica viesada, pois não leva em conta o número de variáveis independentes no modelo. Geralmente, quanto maior o número de variáveis preditoras maior o R^2^ . Nesse sentido, deve-se privilegiar o R^2^ ajustado, que considera o número de variáveis independentes incluídas na equação de regressão e o tamanho da amostra. Apesar da adição de variáveis independentes aumentar o R^2^, o R^2^ ajustado tende a diminuir se as variáveis independentes acrescentadas tiverem pouco poder de explicação (Hair, 2009).
+
+Assim, deve-se usar o erro quadrático médio (EQM) em lugar do R^2^ como medida preditiva do modelo. Quanto menor o EQM, menor a variância não predita pelo modelo. Pode-se também utilizar a raiz do erro quadrático médio (RMSE) para comparar diferentes modelos preditivos, sendo o menor RMSE o preferível (Hair, 2009).
+
+Conforme a tabela 7, o modelo com melhor capacidade preditiva seria o modelo 1, pois tem o menor EQM e o menor RMSE. Vale ressaltar que, utilizando-se a métrica do R^2^ apresentada pelos autores, o modelo com maior capacidade preditiva seria o modelo 3. Entretanto, pelos gráficos apresentados na seção anterior, nenhum dos modelos aproxima os dados previstos dos dados observados.
+
+|          | **Modelo 1** | **Modelo 2** | **Modelo 3** | **Modelo 4** |
+|----------|--------------|--------------|--------------|--------------|
+| **EQM**  | 2.021351     | 5.410911     | 4.839183     | 5.371365     |
+| **RMSE** | 1.422        | 2.326        | 2.200        | 2.318        |
+
+: Tabela 7: EQM e RMSE dos modelos de Lins et al. (2016)
+
+```{r EQMs, eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+mean(reg1$residuals^2)
+mean(reg2$residuals^2)
+mean(reg3$residuals^2)
+mean(reg4$residuals^2)
+```
+
+```{r RMSEs, eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+model_performance(reg1)
+model_performance(reg2)
+model_performance(reg3)
+model_performance(reg4)
+```
+
+## Considerações finais
+
+Em primeiro lugar, destaca-se que a replicação dos modelos ocorreu sem dificuldades. Chegou-se aos mesmos coeficientes e estatísticas que os autores Lins et al. (2016). Entretanto, ao checar os pressupostos dos modelos, notou-se que os modelos apresentados pelo artigo não satisfazem os principais pressupostos dos modelos de regressão linear múltipla, a saber, a homocedasticidade e a distribuição normal dos resíduos. 
+
+Violar esses pressupostos pode significar que a) as inferências baseadas na estatística p-valor (como intervalos de confiança e testes de hipótese) estão viesadas ou imprecisas, já que o p-valor é válido para distribuições normais, e que b) inferências que utilizam como fator o erro padrão dos estimadores MQO da regressão poderá está viesada ou imprecisa, porquanto o cálculo do erro padrão utiliza a variância do modelo que, nesse caso, não é constante. Nesse caso, deve-se substituir o erro padrão pelo erro padrão robusto. 
+
+Embora os estimadores MQO sejam não viesados, sem a confirmação de que há homocedasticidade e normalidade dos resíduos, esses tornam-se viesados, de modo que não se pode calcular intervalos de confiança, nem utilizar o p-valor e conduzir testes de hipóteses. 
+
+Por fim, diante das limitações dos dados e dos modelos, embora os coeficientes apontem para a hipótese de que a redução da maioridade penal não está associada a diminuições nos indicadores de violência dos países, essa não pode ser confirmada, porquanto qualquer inferência realizada a partir dos modelos estará viesada. 
+
+Os próprios autores apontam que sua principal limitação é a confiabilidade da mensuração da variável independente, pois utilizaram diferentes fontes que não necessariamente mediam a mesma coisa. Adiciona-se a tal limitação os modelos apresentados não satisfazerem os pressupostos do modelo de regressão linear múltipla.
+
+## Referências
+
+CIPRIANI, D. Children's right and the minimum age of criminal responsibility: a global perspective. Farnhan: Ashgate, 2009. 
+
+GRAND VALLEY STATE UNIVERSITY. G-9: HRRC Guidance on age of majority/adulthood in USA & other countries, 2012.
+
+HAIR, Joseph F. et al. Análise multivariada de dados. 6ª ed. Porto Alegre: Bookman, 2009.
+
+HAZEL, N. Cross-national comparison of youth justice. London: Youth Justice Board for England and Wales, 2008.
+
+LINS, R.; FIGUEIREDO FILHO, D.; SILVA, L.. A redução da maioridade penal diminui a violência? Evidências de um estudo comparado. Opinião Pública, v. 22, n. 1, p. 118--139, jan. 2016. 
+
+UNODC. World drug report. 2012.
+
+\
+\
